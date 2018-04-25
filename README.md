@@ -51,7 +51,7 @@ x = Foo.where{ baz == 'dude' && bar == 'hello' }.all
 | Logical Operator | Behavior      | Example
 | -------------    | ------------- | --------
 | `&`              | and           | `where{ foo == 'bar' && baz == 'nitch' }`
-| <code>|</code>           | or            | <code>where{ foo == 'bar' | baz == 'nitch' }</code>
+| <code>&#124;</code>           | or            | <code>where{ foo == 'bar' &#124; baz == 'nitch' }</code>
 | `!`              | negation      | `where{ !(foo == 'bar' && baz == 'nitch') }`
 
 
