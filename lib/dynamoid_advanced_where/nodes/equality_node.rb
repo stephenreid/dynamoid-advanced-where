@@ -11,7 +11,6 @@ module DynamoidAdvancedWhere
         self.value = value
       end
 
-
       def to_condition_expression
         "##{expression_prefix} = :#{expression_prefix}V"
       end

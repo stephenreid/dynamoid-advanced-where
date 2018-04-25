@@ -43,8 +43,21 @@ x = Foo.where{ baz == 'dude' && bar == 'hello' }.all
 
 ## Field Filtering
 
-## Equality
+## Field Existence
+Checks to see if a field is defined. See [attribute_exists](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Expressions.OperatorsAndFunctions.html)
 
+Valid on field types: `any`
+
+### Example
+`where{ foo }` or `where{ foo.exists! }`
+
+## Value Equality
+The equality of a field can be tested using `==` and not equals tested using `!=`
+
+Valid on field types: `string`
+
+### Example
+`where{ foo == 'bar' }` and `where{ foo != 'bar' }`
 
 ## Boolean Operators
 

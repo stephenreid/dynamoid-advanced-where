@@ -39,6 +39,13 @@ module DynamoidAdvancedWhere
       end
       alias & and
 
+      def or(other_arg)
+        create_subnode(OrNode).tap do |and_node|
+          and_node.child_nodes = [self, other_arg].compact
+        end
+      end
+      alias | or
+
       def negate
         self.and(nil).tap{|n| n.negate! }
       end

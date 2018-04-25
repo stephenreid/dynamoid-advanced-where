@@ -10,6 +10,10 @@ module DynamoidAdvancedWhere
         super(args)
 
         self.term = term
+        exists!
+      end
+
+      def exists!
         self.child_nodes = create_subnode(ExistsNode, term_node: self)
       end
 
