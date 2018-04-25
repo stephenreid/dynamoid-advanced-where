@@ -7,7 +7,7 @@ module DynamoidAdvancedWhere
 
     delegate :klass, to: :query_builder
     delegate :table_name, to: :klass
-    delegate :to_a, to: :each
+    delegate :to_a, :first, to: :each
 
     def initialize(query_builder:)
       self.query_builder = query_builder

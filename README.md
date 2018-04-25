@@ -1,28 +1,58 @@
-# Dynamoid::Advanced::Where
+# Dynamoid Advanced Where (DAW)
 
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/dynamoid/advanced/where`. To experiment with that code, run `bin/console` for an interactive prompt.
-
-TODO: Delete this and the text above, and describe your gem
+Dynamoid Advanced where provides a more advanced query structure for selecting,
+and updating records. This is very much a work in progress and functionality is
+being added as it is needed.
 
 ## Installation
 
 Add this line to your application's Gemfile:
 
 ```ruby
-gem 'dynamoid-advanced-where'
+gem 'dynamoid_advanced_where'
 ```
 
 And then execute:
 
     $ bundle
 
-Or install it yourself as:
-
-    $ gem install dynamoid-advanced-where
-
 ## Usage
 
-TODO: Write usage instructions here
+The HellowWorld usage for this app is basic search and retrieval. You can
+invoke DAW by calling `where` on a Dynamoid::Document (No relations yet) using
+a new block form.
+
+```ruby
+class Foo
+  include Dynamoid::Document
+
+  field :bar
+  field :baz
+end
+
+# Returns all records with `bar` equal to 'hello'
+Foo.where{ bar == 'hello' }.all
+
+# Advanced boolean logic is also supported
+
+# Returns all records with `bar` equal to 'hello' and `baz` equal to 'dude'
+x = Foo.where{ baz == 'dude' && bar == 'hello' }.all
+```
+
+## Filtering
+
+## Field Filtering
+
+## Equality
+
+
+## Boolean Operators
+| Logical Operator | Behavior      | Example                                      |                   |
+| -------------    | ------------- | --------                                     |                   |
+| `&`              | and           | `where{ foo == 'bar' && baz == 'nitch' }`    |                   |
+| &#124;           | or            | `where{ foo == 'bar' | baz == 'nitch' }` |
+| `!`              | negation      | `where{ !(foo == 'bar' && baz == 'nitch') }` |                   |
+
 
 ## Development
 
