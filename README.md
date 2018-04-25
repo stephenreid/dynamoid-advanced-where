@@ -48,7 +48,7 @@ x = Foo.where{ baz == 'dude' && bar == 'hello' }.all
 
 ## Boolean Operators
 
-| Logical Operator | Behavior | Example |   |
+| Configuration Option          | Default               | Description
 | --------------------          | --------------------- | --------------
 | stat_prefix                   | nil                   | string to prefix to all outgoing stats
 | exclude_rails_instrumentation | false                 | set to true to disable auto instrumentation of the rails stack
@@ -56,14 +56,14 @@ x = Foo.where{ baz == 'dude' && bar == 'hello' }.all
 | logger                        | Rails Logger or STDOUT Logger      | Logger for IATT related issues
 
 
+| Logical Operator | Behavior      | Example
+| -------------    | ------------- | --------
+| `&`              | and           | `where{ foo == 'bar' && baz == 'nitch' }`
+| &#124;           | or            | `where{ foo == 'bar' | baz == 'nitch' }`
+| `!`              | negation      | `where{ !(foo == 'bar' && baz == 'nitch') }`
 
 
 ## Development
-
-| -------------    | ------------- | --------                                     |                   |
-| `&`              | and           | `where{ foo == 'bar' && baz == 'nitch' }`    |                   |
-| &#124;           | or            | `where{ foo == 'bar' | baz == 'nitch' }` |
-| `!`              | negation      | `where{ !(foo == 'bar' && baz == 'nitch') }` |                   |
 
 After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake spec` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
 
