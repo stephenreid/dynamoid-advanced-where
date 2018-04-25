@@ -48,7 +48,7 @@ x = Foo.where{ baz == 'dude' && bar == 'hello' }.all
 
 ## Boolean Operators
 
-| Configuration Option          | Default               | Description
+| Logical Operator | Behavior | Example |   |
 | --------------------          | --------------------- | --------------
 | stat_prefix                   | nil                   | string to prefix to all outgoing stats
 | exclude_rails_instrumentation | false                 | set to true to disable auto instrumentation of the rails stack
@@ -56,7 +56,6 @@ x = Foo.where{ baz == 'dude' && bar == 'hello' }.all
 | logger                        | Rails Logger or STDOUT Logger      | Logger for IATT related issues
 
 
-| Logical Operator | Behavior      | Example                                      |                   |
 | -------------    | ------------- | --------                                     |                   |
 | `&`              | and           | `where{ foo == 'bar' && baz == 'nitch' }`    |                   |
 | &#124;           | or            | `where{ foo == 'bar' | baz == 'nitch' }` |
