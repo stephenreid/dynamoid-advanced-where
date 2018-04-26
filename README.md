@@ -40,32 +40,63 @@ x = Foo.where{ baz == 'dude' && bar == 'hello' }.all
 ```
 
 ## Filtering
+Filter can be applied to Queries (Searches by hash key), Scans, and update
+actions provided by this gem. Not all persistence actions make sense at the end
+of a filtering query, such as `create`.
 
-## Field Filtering
-
-## Field Existence
+### Field Existence
 Checks to see if a field is defined. See [attribute_exists](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Expressions.OperatorsAndFunctions.html)
 
 Valid on field types: `any`
 
-### Example
+#### Example
 `where{ foo }` or `where{ foo.exists! }`
 
-## Value Equality
+### Value Equality
 The equality of a field can be tested using `==` and not equals tested using `!=`
 
 Valid on field types: `string`
 
-### Example
+#### Example
 `where{ foo == 'bar' }` and `where{ foo != 'bar' }`
 
-## Boolean Operators
+### Boolean Operators
 
 | Logical Operator | Behavior      | Example
 | -------------    | ------------- | --------
 | `&`              | and           | `where{ foo == 'bar' && baz == 'nitch' }`
 | <code>&#124;</code>           | or            | <code>where{ foo == 'bar' &#124; baz == 'nitch' }</code>
 | `!`              | negation      | `where{ !(foo == 'bar' && baz == 'nitch') }`
+
+## Retrieving Records
+Retrieving a pre-filtered set of records is a fairly obvious use case for the
+filtering abilities provided by DAW. Only a subset of what you may expect is
+provided, but enumerable is mixed in, and each provides an Enumerator.
+
+Provided methods
+* `all`
+* `first`
+* `each` (and related enumerable methods)
+
+### Scan vs Query
+DAW will automatically preform a query when it determines it is possible,
+however if a query is determined to not be appropriate, a scan will be conduced
+instead. When ever possible, scan do not query. See the DynamoDB docs for why.
+
+#### How a query-able filter is identified
+A scan will be performed when the search is not done via the hash key, with
+exact equality. DAW will examine the boolean logic to determine if a key
+condition may be extracted. For example, a query will be performed in the
+following examples:
+
+* `where{ id == '123' }`
+* `where{ (id == '123') & (bar == 'baz') }`
+
+But it will not be performed in these scenarios
+
+* `where{ id != '123' }`
+* `where{ !(id == '123') }`
+* <code>where{ (id == '123') &#124; (bar == 'baz') }</code>
 
 
 ## Development

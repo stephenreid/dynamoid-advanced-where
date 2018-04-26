@@ -12,7 +12,7 @@ RSpec.describe "Basic value equality matching" do
     let!(:item2) { klass.create(simple_string: 'bar') }
 
     it "matches string equals" do
-      expect(
+     expect(
         klass.where{ simple_string == 'foo' }.all
       ).to match_array [item1]
     end

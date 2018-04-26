@@ -10,6 +10,10 @@ module DynamoidAdvancedWhere
       def negate!
         @negated = !@negated
       end
+
+      def negated?
+        !!@negated
+      end
     end
   end
 end

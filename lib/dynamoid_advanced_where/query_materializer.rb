@@ -14,14 +14,26 @@ module DynamoidAdvancedWhere
     end
 
     def must_scan?
-      !self.query_builder
-        .root_node
-        .all_nodes
-        .lazy
-        .detect do |node|
-          node.respond_to?(:term) &&
-            node.term.to_s == query_builder.klass.hash_key.to_s
+      !extract_query_filter_node.is_a?(Nodes::BaseNode)
+    end
+
+    def extract_query_filter_node
+      @query_filter_node ||=
+        case first_node
+        when Nodes::TermNode
+          if term_node_valid_for_key_filter(first_node)
+            self.query_builder.root_node.child_nodes.delete_at(0)
+          end
+        when Nodes::AndNode
+          if first_node.negated? == false
+            hash_node_idx = first_node.child_nodes.index(&method(:term_node_valid_for_key_filter))
+            first_node.child_nodes.delete_at(hash_node_idx)
+          end
         end
+    end
+
+    def term_node_valid_for_key_filter(term_node)
+      term_node.term.to_s == hash_key
     end
 
     def all
@@ -33,6 +45,25 @@ module DynamoidAdvancedWhere
 
       if must_scan?
         each_via_scan(&blk)
+      else
+        each_via_query(&blk)
+      end
+    end
+
+    def each_via_query
+      query = {
+        table_name: table_name
+      }.merge(filter_clauses).merge({
+        key_condition_expression: extract_query_filter_node.to_condition_expression
+      })
+      binding.pry
+
+      results = client.query(query)
+
+      if results.items
+        results.items.each do |item|
+          yield klass.from_database(item.symbolize_keys)
+        end
       end
     end
 
@@ -41,24 +72,33 @@ module DynamoidAdvancedWhere
         table_name: table_name
       }.merge(filter_clauses)
 
-      if query.has_key?(:condition_expression)
-        query[:filter_expression] = query.delete(:condition_expression)
-      end
-
       results = client.scan(query)
 
-      results.items.each do |item|
-        yield klass.from_database(item.symbolize_keys)
+      if results.items
+        results.items.each do |item|
+          yield klass.from_database(item.symbolize_keys)
+        end
       end
     end
 
     def filter_clauses
-      FilterBuilder.new(query_builder: self.query_builder).to_filter_hash
+      FilterBuilder.new(
+        query_builder: self.query_builder,
+        primary_key_node: extract_query_filter_node
+      ).to_filter_hash(filter_key: :filter_expression)
     end
 
     private
     def client
       Dynamoid.adapter.client
+    end
+
+    def first_node
+      self.query_builder.root_node.child_nodes.first
+    end
+
+    def hash_key
+      @hash_key ||= query_builder.klass.hash_key.to_s
     end
   end
 end
