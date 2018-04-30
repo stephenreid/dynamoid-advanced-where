@@ -12,7 +12,7 @@ module DynamoidAdvancedWhere
       end
 
       def to_condition_expression
-        "##{expression_prefix} < :#{expression_prefix}V"
+        "##{expression_prefix} > :#{expression_prefix}V"
       end
 
       def expression_attribute_names
