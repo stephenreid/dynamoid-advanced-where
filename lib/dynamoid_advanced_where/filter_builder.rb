@@ -1,21 +1,29 @@
 module DynamoidAdvancedWhere
   class FilterBuilder
-    attr_accessor :query_builder, :primary_key_node
+    attr_accessor :query_builder, :hash_key_node, :range_key_node
 
     delegate :root_node, to: :query_builder
     delegate :all_nodes, to: :root_node
 
-    def initialize(primary_key_node:, query_builder: )
+    def initialize(query_builder:, hash_key_node:, range_key_node: )
       self.query_builder = query_builder
-      self.primary_key_node = primary_key_node
+      self.hash_key_node = hash_key_node
+      self.range_key_node = range_key_node
+    end
+
+    def index_nodes
+      [
+        hash_key_node,
+        range_key_node
+      ]
     end
 
     def to_filter_hash(filter_key: )
       {
-        expression_attribute_names: (all_nodes + [primary_key_node]).compact.inject({}) do |hsh, i|
+        expression_attribute_names: (all_nodes + index_nodes).compact.inject({}) do |hsh, i|
           hsh.merge!(i.expression_attribute_names)
         end,
-        expression_attribute_values: (all_nodes + [primary_key_node]).compact.inject({}) do |hsh, i|
+        expression_attribute_values: (all_nodes + index_nodes).compact.inject({}) do |hsh, i|
           hsh.merge!(i.expression_attribute_values)
         end,
       }.merge(

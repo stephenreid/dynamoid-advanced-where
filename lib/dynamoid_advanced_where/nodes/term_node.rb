@@ -55,7 +55,7 @@ module DynamoidAdvancedWhere
 
         self
       end
-      alias < greater_than
+      alias > greater_than
 
       def ne(other_value)
         eq(other_value).negate

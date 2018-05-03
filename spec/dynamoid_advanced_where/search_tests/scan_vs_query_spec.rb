@@ -58,11 +58,32 @@ RSpec.describe 'Scan vs Query' do
 
   describe "complex queryable" do
     it 'performs a query when searching only by ID' do
-      default_klass.create(fooy: 'foo')
-      default_klass.create(fooy: 'foo', bar: 'baz')
-      query_mat = default_klass.where{ (id == 'foo') & (bar == 'baz') }.query_materializer
+      obj = default_klass.create(bar: 'baz')
+      query_mat = default_klass.where{ (id == obj.id) & (bar == 'baz') }.query_materializer
       expect(query_mat).to receive(:each_via_query).once.and_call_original
       expect(query_mat).not_to receive(:each_via_scan)
+      expect(query_mat.each.to_a.length).to eq 1
+    end
+  end
+
+  describe "a range lookup during a query" do
+    let(:default_klass) do
+      new_class(table_name: 'compound') do
+        field :bar, :number
+        self.range_key = :bar
+      end
+    end
+
+    it "appends the range key to the filter" do
+      default_klass.create(id: 'a', bar: 1)
+      default_klass.create(id: 'a', bar: 2)
+
+      query_mat = default_klass.where{ (id == 'a') & (bar > 1) }.query_materializer
+
+      expect(query_mat.send(:client)).to receive(:query).with(a_hash_including(
+        key_condition_expression: a_string_matching(/#[^ ]+ > :[^ ]+/)
+      )).and_call_original
+
       expect(query_mat.each.to_a.length).to eq 1
     end
   end

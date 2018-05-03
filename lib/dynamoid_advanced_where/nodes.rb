@@ -6,3 +6,4 @@ require_relative './nodes/or_node'
 
 require_relative './nodes/equality_node'
 require_relative './nodes/exists_node'
+require_relative './nodes/greater_than_node'

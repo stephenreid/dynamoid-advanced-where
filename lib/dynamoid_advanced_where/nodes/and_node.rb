@@ -4,6 +4,7 @@ module DynamoidAdvancedWhere
       attr_accessor :child_nodes
 
       def to_condition_expression
+        return if child_nodes.empty?
         "#{@negated ? 'NOT ' : ''}(#{child_nodes.map(&:to_condition_expression).join(') and (')})"
       end
 

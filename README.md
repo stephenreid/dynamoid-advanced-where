@@ -83,6 +83,13 @@ DAW will automatically preform a query when it determines it is possible,
 however if a query is determined to not be appropriate, a scan will be conduced
 instead. When ever possible, scan do not query. See the DynamoDB docs for why.
 
+DAW will also extract filters on the range key whenever possible. In order to
+filter on a range key to be used for a query, it must be one of the allowed
+range key filters and at the top level of filters.
+
+
+**NOTE:** Global Secondary Indices are not yet supported
+
 #### How a query-able filter is identified
 A scan will be performed when the search is not done via the hash key, with
 exact equality. DAW will examine the boolean logic to determine if a key
@@ -104,6 +111,10 @@ But it will not be performed in these scenarios
 After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake spec` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
 
 To install this gem onto your local machine, run `bundle exec rake install`. To release a new version, update the version number in `version.rb`, and then run `bundle exec rake release`, which will create a git tag for the version, push git commits and tags, and push the `.gem` file to [rubygems.org](https://rubygems.org).
+
+### TODO:
+
+* Support Global Secondary Index
 
 ## Contributing
 
