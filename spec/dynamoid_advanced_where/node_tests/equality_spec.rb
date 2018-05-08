@@ -2,7 +2,7 @@ require 'spec_helper'
 
 RSpec.describe "Basic value equality matching" do
   let(:klass) do
-    new_class(table_opts: {key: :bar} ) do
+    new_class(table_name: 'equality_spec', table_opts: {key: :bar} ) do
       field :simple_string
     end
   end

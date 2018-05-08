@@ -2,7 +2,7 @@ require 'spec_helper'
 
 RSpec.describe "Combining multiple queries with &" do
   let(:klass) do
-    new_class(table_opts: {key: :bar} ) do
+    new_class(table_name: 'and_check', table_opts: {key: :bar} ) do
       field :simple_string
       field :second_string
     end

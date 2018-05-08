@@ -2,7 +2,7 @@ require 'spec_helper'
 
 RSpec.describe "Attribute Existance" do
   let(:klass) do
-    new_class(table_opts: {key: :bar} ) do
+    new_class(table_name: 'attr_exist', table_opts: {key: :bar} ) do
       field :simple_string
     end
   end

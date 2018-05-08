@@ -16,7 +16,7 @@ RSpec.describe 'QueryBuilder' do
 
     it "generates a query builder when using a valid field" do
       expect {
-        klass.where{ foo == 1 }
+        klass.where{ foo == '1' }
       }.not_to raise_error
     end
   end

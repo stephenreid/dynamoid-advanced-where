@@ -2,7 +2,7 @@ require 'spec_helper'
 
 RSpec.describe "Greater Than" do
   let(:klass) do
-    new_class(table_opts: {key: :bar} ) do
+    new_class(table_name: 'greater_than_test', table_opts: {key: :bar} ) do
       field :simple_string
       field :num, :number
     end
