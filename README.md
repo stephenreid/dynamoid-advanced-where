@@ -145,6 +145,15 @@ To install this gem onto your local machine, run `bundle exec rake install`. To 
     * between
     * begins with
   * convert to bulk query if multiple hash key terms are specified
+* Item mutation [Docs](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Expressions.UpdateExpressions.html#Expressions.UpdateExpressions.SET)
+  * Update (without insert)
+  * Upserting
+  * Increment / Decrement number
+  * Append item(s) to list
+    * Prepend item(s) to list
+  * Adding nested map attribute (low priority)
+  * Set value if not set
+  * Remove attributes
 
 ## Contributing
 
