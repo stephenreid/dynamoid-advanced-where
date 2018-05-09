@@ -67,8 +67,8 @@ Valid on field types: `string`
 
 | Logical Operator | Behavior      | Example
 | -------------    | ------------- | --------
-| `&`              | and           | `where{ foo == 'bar' & baz == 'nitch' }`
-| <code>&#124;</code>           | or            | <code>where{ foo == 'bar' &#124; baz == 'nitch' }</code>
+| `&`              | and           | `where{ (foo == 'bar') & (baz == 'nitch') }`
+| <code>&#124;</code>           | or            | <code>where{ (foo == 'bar') &#124; (baz == 'nitch') }</code>
 | `!`              | negation      | `where{ !( (foo == 'bar') & (baz == 'nitch')) }`
 
 ## Retrieving Records
