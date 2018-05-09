@@ -5,6 +5,7 @@ module ClassCreator
       table({ name: (table_name || :documents) }.merge(table_opts))
     end
     klass.class_eval(&blk) if block_given?
+    klass.create_table
     klass
   end
 end

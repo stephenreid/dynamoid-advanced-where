@@ -105,6 +105,38 @@ But it will not be performed in these scenarios
 * `where{ !(id == '123') }`
 * <code>where{ (id == '123') &#124; (bar == 'baz') }</code>
 
+## Mutating Records
+DAW provides the ability to modify records only if they meet the criteria defined
+by the where block.
+
+### Upserting
+You map perform an upsert using the `.upsert` method on a relation. For example,
+consider the following example for conditionally updating a string field.
+
+```ruby
+class Foo
+  include Dynamoid::Document
+  field :a_string
+  field :a_number, number
+end
+
+item = Foo.create(a_number: 5, a_string: 'bar')
+
+Foo.where{ a_number > 5 }.upsert(item.id, a_string: 'dude')
+
+item.reload.a_string # => 'bar'
+
+Foo.where{ a_number > 4 }.upsert(item.id, a_string: 'wassup')
+
+item.reload.a_string # => 'wassup'
+```
+
+`upsert` can also create a record if an existing one is not found, if the hash
+key can be specified. By requiring the hash key be set, you can prevent an insert
+and force an update to occur.
+
+**Note:** Upsert must be called with the hash as the first parameter, and
+the range key as the second parameter if required for the model.
 
 ## Development
 
@@ -117,6 +149,7 @@ To install this gem onto your local machine, run `bundle exec rake install`. To 
 #### Known issues
 * If you specify multiple term nodes for a query it will generate an invalid
   query
+* No support for [custom types](https://github.com/Dynamoid/Dynamoid#custom-types)
 
 #### Enhancements
 * Support Global Secondary Index
