@@ -114,7 +114,37 @@ To install this gem onto your local machine, run `bundle exec rake install`. To 
 
 ### TODO:
 
+#### Known issues
+* If you specify multiple term nodes for a query it will generate an invalid
+  query
+
+#### Enhancements
 * Support Global Secondary Index
+* Conditions:
+  * Equality
+    * Partially implemented
+  * Not Equals
+  * less than
+  * less than or equal to
+  * greater than
+  * greater than or equal to
+  * between
+  * in
+  * attribute_not_exists
+  * attribute_type
+  * begins with
+  * contains
+  * size
+* Query enhancements
+  * Range key conditions:
+    * equality
+    * less than
+    * less than or equal to
+    * greater than
+    * greater than or equal to
+    * between
+    * begins with
+  * convert to bulk query if multiple hash key terms are specified
 
 ## Contributing
 

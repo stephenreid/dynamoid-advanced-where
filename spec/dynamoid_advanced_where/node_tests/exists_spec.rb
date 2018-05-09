@@ -9,7 +9,7 @@ RSpec.describe "Attribute Existance" do
 
   describe "attribute existance" do
     let(:klass2) do
-      new_class(table_opts: {key: :bar} )
+      new_class(table_name: 'attr_exist', table_opts: {key: :bar} )
     end
 
     it "only returns exact matches" do
