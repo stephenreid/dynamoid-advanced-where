@@ -36,8 +36,11 @@ Foo.where{ bar == 'hello' }.all
 # Advanced boolean logic is also supported
 
 # Returns all records with `bar` equal to 'hello' and `baz` equal to 'dude'
-x = Foo.where{ baz == 'dude' && bar == 'hello' }.all
+x = Foo.where{ (baz == 'dude') & (bar == 'hello') }.all
 ```
+
+**Note:** Those `()` are required, you do remember your [operator precedence](https://ruby-doc.org/core-2.2.0/doc/syntax/precedence_rdoc.html)
+right?
 
 ## Filtering
 Filter can be applied to Queries (Searches by hash key), Scans, and update
@@ -64,9 +67,9 @@ Valid on field types: `string`
 
 | Logical Operator | Behavior      | Example
 | -------------    | ------------- | --------
-| `&`              | and           | `where{ foo == 'bar' && baz == 'nitch' }`
+| `&`              | and           | `where{ foo == 'bar' & baz == 'nitch' }`
 | <code>&#124;</code>           | or            | <code>where{ foo == 'bar' &#124; baz == 'nitch' }</code>
-| `!`              | negation      | `where{ !(foo == 'bar' && baz == 'nitch') }`
+| `!`              | negation      | `where{ !( (foo == 'bar') & (baz == 'nitch')) }`
 
 ## Retrieving Records
 Retrieving a pre-filtered set of records is a fairly obvious use case for the
@@ -81,7 +84,7 @@ Provided methods
 ### Scan vs Query
 DAW will automatically preform a query when it determines it is possible,
 however if a query is determined to not be appropriate, a scan will be conduced
-instead. When ever possible, scan do not query. See the DynamoDB docs for why.
+instead. When ever possible, query do not scan. See the DynamoDB docs for why.
 
 DAW will also extract filters on the range key whenever possible. In order to
 filter on a range key to be used for a query, it must be one of the allowed
