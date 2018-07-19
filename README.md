@@ -63,6 +63,14 @@ Valid on field types: `string`
 #### Example
 `where{ foo == 'bar' }` and `where{ foo != 'bar' }`
 
+### Less than
+The less than for a field can be tested using `<`
+
+Valid on field types: `numeric`, and `datetime` (only when stored as a number)
+
+#### Example
+`where{ foo < 123 }` and `where{ foo < Date.today }`
+
 ### Boolean Operators
 
 | Logical Operator | Behavior      | Example
@@ -141,6 +149,9 @@ and force an update to occur.
 **Note:** Upsert must be called with the hash as the first parameter, and
 the range key as the second parameter if required for the model.
 
+*Note:** Upsert will return nil if no records were found that matched the provided
+parameters
+
 ## Development
 
 After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake spec` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
@@ -161,6 +172,7 @@ To install this gem onto your local machine, run `bundle exec rake install`. To 
     * Partially implemented
   * Not Equals
   * less than
+    * Implemented for numerics and datetimes stored as integer
   * less than or equal to
   * greater than
   * greater than or equal to
