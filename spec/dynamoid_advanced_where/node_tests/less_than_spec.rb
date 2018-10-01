@@ -5,7 +5,8 @@ RSpec.describe "Less Than" do
     new_class(table_name: 'less_than_test', table_opts: {key: :bar} ) do
       field :simple_string
       field :string_date, :datetime, store_as_string: true
-      field :int_date, :datetime
+      field :int_datetime, :datetime
+      field :int_date, :date
       field :num, :number
     end
   end
@@ -51,13 +52,13 @@ RSpec.describe "Less Than" do
     end
   end
 
-  describe "of a float date field" do
-    let!(:created_today) { klass.create(int_date: Time.now) }
-    let!(:created_yesterday) { klass.create(int_date: Time.now - 3600 * 24) }
+  describe "of a int datetime field" do
+    let!(:created_today) { klass.create(int_datetime: Time.now) }
+    let!(:created_yesterday) { klass.create(int_datetime: Time.now - 3600 * 24) }
 
     it "raises an error if the value is not a date or time" do
       expect{
-        klass.where{ int_date < 'abc'}.all
+        klass.where{ int_datetime < 'abc'}.all
       }.to raise_error(
         ArgumentError,
         'Unable to perform less than on datetime with a value of type String. Expected Date or Time'
@@ -66,13 +67,51 @@ RSpec.describe "Less Than" do
 
     it "filters based on a date" do
       expect(
-        klass.where{ int_date < Date.today}.all
+        klass.where{ int_datetime < Date.today}.all
       ).to eq [created_yesterday]
     end
 
     it "filters based on a time" do
       expect(
-        klass.where{ int_date < Time.now - 60}.all
+        klass.where{ int_datetime < Time.now - 60}.all
+      ).to eq [created_yesterday]
+    end
+  end
+
+  describe "of a int date field" do
+    let!(:created_today) { klass.create(int_date: Time.now) }
+    let!(:created_yesterday) { klass.create(int_date: Time.now - 3600 * 24) }
+
+    it "raises an error if the value is string" do
+      expect{
+        klass.where{ int_date < 'abc'}.all
+      }.to raise_error(
+        ArgumentError,
+        'Unable to perform less than on date with a value of type String. Expected Date'
+      )
+    end
+
+    it "raises an error if the value is a datetime" do
+      expect{
+        klass.where{ int_date < DateTime.now}.all
+      }.to raise_error(
+        ArgumentError,
+        'Unable to perform less than on date with a value of type DateTime. Expected Date'
+      )
+    end
+
+    it "raises an error if the value is a time" do
+      expect{
+        klass.where{ int_date < Time.now}.all
+      }.to raise_error(
+        ArgumentError,
+        'Unable to perform less than on date with a value of type Time. Expected Date'
+      )
+    end
+
+    it "filters based on a date" do
+      expect(
+        klass.where{ int_date < Date.today}.all
       ).to eq [created_yesterday]
     end
   end

@@ -83,12 +83,6 @@ module DynamoidAdvancedWhere
         eq(other_value).negate
       end
       alias != ne
-
-
-      private
-      def attribute_config
-        klass.attributes[term]
-      end
     end
   end
 end
