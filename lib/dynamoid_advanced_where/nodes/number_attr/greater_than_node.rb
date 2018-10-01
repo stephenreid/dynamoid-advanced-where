@@ -1,7 +1,7 @@
 module DynamoidAdvancedWhere
   module Nodes
     module NumberAttr
-      class GreaterThanNode < BaseNode
+      class GreaterThanNode < Nodes::GreaterThanNode
         delegate :term, to: :term_node
 
         attr_accessor :term_node, :value
