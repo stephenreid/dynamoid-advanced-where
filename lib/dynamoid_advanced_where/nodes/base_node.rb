@@ -76,6 +76,10 @@ module DynamoidAdvancedWhere
       def create_subnode(node_klass, args = {})
         node_klass.new({klass: klass}.merge(args))
       end
+
+      def attribute_config
+        klass.attributes[term]
+      end
     end
   end
 end

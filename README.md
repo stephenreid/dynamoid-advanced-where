@@ -208,7 +208,7 @@ To install this gem onto your local machine, run `bundle exec rake install`. To 
     * Partially implemented
   * Not Equals
   * less than
-    * Implemented for numerics and datetimes stored as integer
+    * Implemented for numerics, datetimes, dates stored as integer
   * less than or equal to
   * greater than
   * greater than or equal to
