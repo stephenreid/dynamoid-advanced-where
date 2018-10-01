@@ -4,7 +4,7 @@ jobs:
   build:
     docker:
       - image: ruby:2.5
-      - image: dwmkerr/dynamodb
+      - image: cnadiminti/dynamodb-local
     steps:
       - checkout
       - restore_cache:
