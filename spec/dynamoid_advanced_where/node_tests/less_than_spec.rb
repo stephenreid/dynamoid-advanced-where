@@ -4,10 +4,11 @@ RSpec.describe "Less Than" do
   let(:klass) do
     new_class(table_name: 'less_than_test', table_opts: {key: :bar} ) do
       field :simple_string
-      field :string_date, :datetime, store_as_string: true
+      field :num, :number
+      field :string_datetime, :datetime, store_as_string: true
       field :int_datetime, :datetime
       field :int_date, :date
-      field :num, :number
+      field :str_date, :date, store_as_string: true
     end
   end
 
@@ -41,10 +42,10 @@ RSpec.describe "Less Than" do
     end
   end
 
-  describe "of a string date field" do
+  describe "of a string datetime field" do
     it "raises an error" do
       expect{
-        klass.where{ string_date < 1.day.ago}.all
+        klass.where{ string_datetime < 1.day.ago}.all
       }.to raise_error(
         ArgumentError,
         'Unable to perform less than on value of type Datetime unless stored as an integer'
@@ -75,6 +76,17 @@ RSpec.describe "Less Than" do
       expect(
         klass.where{ int_datetime < Time.now - 60}.all
       ).to eq [created_yesterday]
+    end
+  end
+
+  describe "of a string date field" do
+    it "raises an error" do
+      expect{
+        klass.where{ str_date < 1.day.ago.to_date}.all
+      }.to raise_error(
+        ArgumentError,
+        'Unable to perform less than on value of type Date unless stored as an integer'
+      )
     end
   end
 
