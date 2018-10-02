@@ -40,24 +40,16 @@ module DynamoidAdvancedWhere
       alias == eq
 
       def greater_than(other_value)
-        if attribute_config[:type] != :number
-          raise ArgumentError, "Unable to perform greater than on field of type #{attribute_config[:type]}"
-        end
+        klass = GreaterThanNode.determine_subtype(
+          attribute_config,
+          other_value
+        )
 
-        unless other_value.is_a?(Numeric)
-          raise ArgumentError, "Unable to perform greater than on value of type #{other_value.class}"
-        end
-
-        self.child_nodes = case other_value
-                           when Numeric
-                             create_subnode(
-                               GreaterThanNode,
-                               term_node: self,
-                               value: other_value
-                             )
-                           else
-                             raise "Not sure what to do with #{other_value}"
-                           end
+        self.child_nodes = create_subnode(
+          klass,
+          term_node: self,
+          value: other_value
+        )
 
         self
       end
