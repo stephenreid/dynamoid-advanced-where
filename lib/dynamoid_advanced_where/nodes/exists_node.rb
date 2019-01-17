@@ -13,7 +13,11 @@ module DynamoidAdvancedWhere
 
 
       def to_condition_expression
-         "attribute_exists(##{expression_prefix})"
+         "NOT(attribute_not_exists(##{expression_prefix}) or ##{expression_prefix} = :#{expression_prefix}V2)"
+      end
+
+      def expression_attribute_values
+        { ":#{expression_prefix}V2" => nil }
       end
 
       def expression_attribute_names
