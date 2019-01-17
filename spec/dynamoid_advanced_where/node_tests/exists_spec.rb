@@ -25,7 +25,8 @@ RSpec.describe "Attribute Existance" do
 
     it "allows negation" do
       klass.create(simple_string: 'foo')
-      item1 = klass.create(simple_string: nil)
+      item1 = klass.create
+      klass.upsert(item1.hash_key, simple_string: nil)
       item2 = klass2.create
 
       expect(
