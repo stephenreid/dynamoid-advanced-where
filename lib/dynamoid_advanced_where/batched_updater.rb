@@ -1,7 +1,6 @@
-
 module DynamoidAdvancedWhere
   class BatchedUpdater
-    DEEP_MERGE_ATTRIBUTES = %i[expression_attribute_names expression_attribute_values]
+    DEEP_MERGE_ATTRIBUTES = %i[expression_attribute_names expression_attribute_values].freeze
 
     attr_accessor :query_builder, :_set_values, :_array_appends, :_set_appends
     delegate :klass, to: :query_builder
@@ -19,13 +18,16 @@ module DynamoidAdvancedWhere
         return_values: 'ALL_NEW',
         key: {
           klass.hash_key => hash_key,
-          klass.range_key => range_key,
-        }.delete_if{|k,v| k.nil? }
+          klass.range_key => range_key
+        }.delete_if { |k, _v| k.nil? }
       }
       resp = client.update_item(update_item_arguments.merge(key_args))
 
       klass.from_database(resp.attributes)
     rescue Aws::DynamoDB::Errors::ConditionalCheckFailedException
+    rescue => e
+      binding.pry
+      raise
     end
 
     def set_values(vals)
@@ -37,9 +39,9 @@ module DynamoidAdvancedWhere
       appends.each do |k, v|
         case klass.attributes[k.to_sym][:type]
         when :set
-          _set_appends << {k => v.to_set}
+          _set_appends << { k => v.to_set }
         when :array
-          _array_appends << {k => v}
+          _array_appends << { k => v }
         else
           raise 'can only append to sets or arrays'
         end
@@ -51,7 +53,7 @@ module DynamoidAdvancedWhere
     private
 
     def merge_multiple_sets(items_to_merge, result_base: {})
-      default = {collected_update_expression: []}
+      default = { collected_update_expression: [] }
       result = result_base.merge(default)
       items_to_merge.each do |update_data|
         result[:collected_update_expression] << update_data.delete(:collected_update_expression)
@@ -72,7 +74,7 @@ module DynamoidAdvancedWhere
 
     def update_item_arguments
       filter = merge_multiple_sets(
-        [ field_update_arguments, add_update_args ],
+        [field_update_arguments, add_update_args],
         result_base: filter_builder.to_scan_filter,
       )
 
@@ -82,7 +84,7 @@ module DynamoidAdvancedWhere
       filter
     end
 
-    def args_to_update_command(update_args, command: )
+    def args_to_update_command(update_args, command:)
       return {} if update_args[:collected_update_expression].empty?
 
       update_args.merge!(
@@ -91,7 +93,6 @@ module DynamoidAdvancedWhere
         ]
       )
     end
-
 
     def set_values_update_args
       args_to_update_command(
@@ -104,7 +105,6 @@ module DynamoidAdvancedWhere
       args_to_update_command(list_append_for_sets, command: 'ADD')
     end
 
-
     def explicit_set_args
       builder_hash = { collected_update_expression: [] }
 
@@ -115,11 +115,10 @@ module DynamoidAdvancedWhere
     end
 
     def list_append_for_sets
-
       builder_hash = { collected_update_expression: [] }
 
       _set_appends.each_with_object(builder_hash) do |to_append, h|
-        to_append.each do |k,v|
+        to_append.each do |k, v|
           prefix = merge_in_attr_placeholders(h, k, v)
           builder_hash[:collected_update_expression] << "##{prefix} :#{prefix}"
         end
@@ -137,7 +136,7 @@ module DynamoidAdvancedWhere
       }
 
       update_args = _array_appends.each_with_object(builder_hash) do |to_append, h|
-        to_append.each do |k,v|
+        to_append.each do |k, v|
           prefix = merge_in_attr_placeholders(h, k, v)
           builder_hash[:collected_update_expression] << "##{prefix}  = list_append(if_not_exists(##{prefix}, :#{empty_list_prefix}), :#{prefix})"
         end
@@ -162,10 +161,7 @@ module DynamoidAdvancedWhere
         {
           expression_attribute_names: { "##{prefix}" => field_name },
           expression_attribute_values: {
-            ":#{prefix}" => klass.dump_field(
-              value,
-                klass.attributes[field_name]
-            )
+            ":#{prefix}" => dump(value, klass.attributes[field_name])
           }
         }
       ]
@@ -173,6 +169,7 @@ module DynamoidAdvancedWhere
 
     def hash_extendeer(key, old_value, new_value)
       return new_value unless key.in?(DEEP_MERGE_ATTRIBUTES)
+
       old_value.merge(new_value)
     end
 
@@ -182,9 +179,13 @@ module DynamoidAdvancedWhere
 
     def filter_builder
       @filter_builder ||= FilterBuilder.new(
-        query_builder: self.query_builder,
+        query_builder: query_builder,
         klass: klass,
       )
+    end
+
+    def dump(value, config)
+      Dynamoid::Dumping.dump_field(value, config)
     end
   end
 end
