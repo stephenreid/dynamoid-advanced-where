@@ -74,6 +74,15 @@ module DynamoidAdvancedWhere
 
       end
 
+      def flatten_tree!
+        Array.wrap(self.child_nodes).map(&:flatten_tree!)
+        self.flatten_logic!
+      end
+
+      def flatten_logic!
+
+      end
+
       def expression_prefix
         @expression_prefix ||= SecureRandom.hex
       end
