@@ -55,6 +55,11 @@ module DynamoidAdvancedWhere
       self
     end
 
+    def decrement(*fields, by: 1)
+      increment(*fields, by: -1 * by)
+      self
+    end
+
     private
 
     def merge_multiple_sets(items_to_merge, result_base: {})
