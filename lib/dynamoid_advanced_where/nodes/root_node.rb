@@ -18,6 +18,8 @@ module DynamoidAdvancedWhere
           ).compact
         end
 
+        new_child.flatten_tree!
+
         self.child_nodes = [new_child]
       end
     end

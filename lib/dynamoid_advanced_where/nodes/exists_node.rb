@@ -25,6 +25,10 @@ module DynamoidAdvancedWhere
           "##{expression_prefix}" => term
         }
       end
+
+      def dup
+        self.class.new(term_node: term_node, klass: klass)
+      end
     end
   end
 end
