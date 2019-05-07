@@ -134,6 +134,8 @@ module DynamoidAdvancedWhere
     end
 
     def increment_field_updates
+      return {} if _increments.empty?
+
       zero_prefix = SecureRandom.hex
 
       builder_hash = {
