@@ -1,8 +1,10 @@
+# frozen_string_literal: true
+
 module DynamoidAdvancedWhere
   class BatchedUpdater
     DEEP_MERGE_ATTRIBUTES = %i[expression_attribute_names expression_attribute_values].freeze
 
-    attr_accessor :query_builder, :_set_values, :_array_appends, :_set_appends
+    attr_accessor :query_builder, :_set_values, :_array_appends, :_set_appends, :_increments
     delegate :klass, to: :query_builder
 
     def initialize(query_builder:)
@@ -10,6 +12,7 @@ module DynamoidAdvancedWhere
       self._set_values = {}
       self._set_appends = []
       self._array_appends = []
+      self._increments = Hash.new(0)
     end
 
     def apply(hash_key, range_key = nil)
@@ -47,6 +50,16 @@ module DynamoidAdvancedWhere
       self
     end
 
+    def increment(*fields, by: 1)
+      fields.each { |field| _increments[field] += by }
+      self
+    end
+
+    def decrement(*fields, by: 1)
+      increment(*fields, by: -1 * by)
+      self
+    end
+
     private
 
     def merge_multiple_sets(items_to_merge, result_base: {})
@@ -72,6 +85,10 @@ module DynamoidAdvancedWhere
     def update_item_arguments
       filter = merge_multiple_sets(
         [field_update_arguments, add_update_args],
+        [
+          field_update_arguments,
+          add_update_args,
+        ],
         result_base: filter_builder.to_scan_filter,
       )
 
@@ -93,7 +110,13 @@ module DynamoidAdvancedWhere
 
     def set_values_update_args
       args_to_update_command(
-        merge_multiple_sets([explicit_set_args, list_append_for_arrays]),
+        merge_multiple_sets(
+          [
+            explicit_set_args,
+            list_append_for_arrays,
+            increment_field_updates
+          ]
+        ),
         command: 'SET'
       )
     end
@@ -108,6 +131,25 @@ module DynamoidAdvancedWhere
       _set_values.each_with_object(builder_hash) do |(k, v), h|
         prefix = merge_in_attr_placeholders(h, k, v)
         h[:collected_update_expression] << "##{prefix} = :#{prefix}"
+      end
+    end
+
+
+    def increment_field_updates
+      return {} if _increments.empty?
+
+      zero_prefix = SecureRandom.hex
+
+      builder_hash = {
+        collected_update_expression: [],
+        expression_attribute_values: {
+          ":#{zero_prefix}": 0
+        }
+      }
+
+      _increments.each_with_object(builder_hash) do |(field, change), h|
+        prefix = merge_in_attr_placeholders(h, field, change)
+        builder_hash[:collected_update_expression] << "##{prefix} = if_not_exists(##{prefix}, :#{zero_prefix}) + :#{prefix}"
       end
     end
 

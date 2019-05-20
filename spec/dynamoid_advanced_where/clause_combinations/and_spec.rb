@@ -11,12 +11,13 @@ RSpec.describe "Combining multiple queries with &" do
   let!(:instance1) { klass.create(simple_string: 'a', second_string: 'b') }
   let!(:instance2) { klass.create(simple_string: 'a', second_string: 'c') }
   let!(:instance3) { klass.create(simple_string: 'a', second_string: 'd') }
+  let!(:instance4) { klass.create(simple_string: 'a') }
 
   let!(:base_filter) { klass.where{ simple_string == 'a' } }
 
   after do
     # It should not modify the initial filter
-    expect(base_filter.all).to match_array [instance1, instance2, instance3]
+    expect(base_filter.all).to match_array [instance1, instance2, instance3, instance4]
   end
 
   context "when passing an argument and a block" do
@@ -32,6 +33,12 @@ RSpec.describe "Combining multiple queries with &" do
       expect(
         base_filter.where{ second_string == 'b' }.all
       ).to eq [instance1]
+    end
+
+    it "combines existence nodes" do
+      expect(
+        klass.where{ !second_string }.and(base_filter).all
+      ).to eq [instance4]
     end
 
     it "allows combinations with .and " do

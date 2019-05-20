@@ -221,6 +221,30 @@ append_to(
 
 If the fields are unset, it will still apply the changes to am empty array.
 
+### Increment / Decrement a value
+
+You may increment or decrement a numeric value by using `increment` or `decrement`
+
+```ruby
+increment(:field_one, :field_two)
+```
+
+```ruby
+decrement(:field_one, :field_two)
+```
+
+You may also provide an optional `by:` config to increment by more than one.
+
+```ruby
+increment(:field_one, :field_two, by: 3)
+```
+
+```ruby
+decrement(:field_one, :field_two, by: 3)
+```
+
+If the value of the field is currently unset, it will initialize to zero
+
 ## Development
 
 After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake spec` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
