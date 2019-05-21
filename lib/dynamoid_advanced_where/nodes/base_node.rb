@@ -12,13 +12,9 @@ module DynamoidAdvancedWhere
       end
 
       def dup
-        build_dup.tap do |e|
+        self.class.new(klass: klass).tap do |e|
           e.child_nodes = dup_children
         end
-      end
-
-      def build_dup
-        self.class.new(klass: klass)
       end
 
       def evaluate_block(blk)
@@ -75,15 +71,6 @@ module DynamoidAdvancedWhere
       end
 
       def to_condition_expression
-
-      end
-
-      def flatten_tree!
-        Array.wrap(self.child_nodes).map(&:flatten_tree!)
-        self.flatten_logic!
-      end
-
-      def flatten_logic!
 
       end
 
