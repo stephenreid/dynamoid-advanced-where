@@ -84,7 +84,6 @@ module DynamoidAdvancedWhere
 
     def update_item_arguments
       filter = merge_multiple_sets(
-        [field_update_arguments, add_update_args],
         [
           field_update_arguments,
           add_update_args,
