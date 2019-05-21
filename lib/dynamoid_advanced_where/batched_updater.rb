@@ -28,9 +28,6 @@ module DynamoidAdvancedWhere
 
       klass.from_database(resp.attributes)
     rescue Aws::DynamoDB::Errors::ConditionalCheckFailedException
-    rescue => e
-      binding.pry
-      raise
     end
 
     def set_values(vals)
